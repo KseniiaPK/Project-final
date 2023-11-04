@@ -1,0 +1,163 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!-- Own JS -->
+    <script type="text/javascript" src="{% static 'script.js' %}"></script>
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Subjects</title>
+  </head>
+  <style>
+
+    .grid-item {
+      width: calc(17% - 20px);
+      height: 100px;
+      display: inline-block;
+      margin: 10px;
+      text-align: center;
+      line-height: 100px;
+      font-size: 20px;
+      color: black;
+      background-color: #f5f5f5; /* Light gray background */
+      border: 2px solid #000;
+      border-radius: 5px;
+    }
+
+    .grid-item:nth-child(1) {
+      background-color: #add8e6; /* Light Blue */
+    }
+
+    .grid-item:nth-child(2) {
+      background-color: #f08080; /* Light Coral */
+    }
+
+    .grid-item:nth-child(3) {
+      background-color: #98fb98; /* Pale Green */
+    }
+
+    .grid-item:nth-child(4) {
+      background-color: #fffacd; /* Lemon Chiffon */
+    }
+
+    .grid-item:nth-child(5) {
+      background-color: #e6e6fa; /* Lavender */
+    }
+
+    .grid-item:nth-child(6) {
+      background-color: #ffa07a; /* Light Salmon */
+    }
+
+    .grid-item:nth-child(7) {
+      background-color: #b0c4de; /* Light Steel Blue */
+    }
+
+    .grid-item:nth-child(8) {
+      background-color: #20b2aa; /* Light Sea Green */
+    }
+
+    .grid-item:nth-child(9) {
+      background-color: #d2b48c; /* Tan */
+    }
+
+    .grid-item:nth-child(10) {
+      background-color: #d3d3d3; /* Light Gray */
+    }
+
+    .grid-item a {
+      color: black; /* Black text for links */
+      text-decoration: none;
+    }
+
+    .grid-item:nth-child(5n+1) {
+      clear: left;
+    }
+
+
+    .center-content {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .black-text {
+        color: black;
+      }
+
+      .menu-link {
+        text-decoration: none;
+        padding: 10px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+      }
+
+      .menu-link:hover {
+        background-color: #e0e0e0;
+      }
+
+  </style>
+
+  <body style="min-width: 600px; " class="d-flex flex-column min-vh-100">
+    <!-- NAVBAR -->
+
+    <ul class="nav justify-content-left" style="background-color: #f0f0f0; padding: 10px;">
+      <li class="nav-item">
+        <a class="nav-link black-text menu-link" href="{% url 'studentBio'%}">Student Bio</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link black-text menu-link" href="{% url 'teachers' %}">Teachers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link black-text menu-link" href="{% url 'myCourses' %}">My Courses</a>
+      </li>
+    </ul>
+
+    {% comment %}MAIN{% endcomment %}
+
+    <div class="container" style="padding-top: 40px; padding-bottom: 40px;">
+      <div class="center-content">
+        <h1>All Subject List</h1>
+        <div class="grid-container">
+          {% for subject in subjects %}
+            <div class="grid-item">
+              <a href="{% url 'allCourses' subject_id=subject.id %}">{{ subject.Name }}</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="container mt-auto" style=" bottom: 0; ">
+      <footer class="d-flex flex-wrap justify-content-center justify-content-md-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+          <span class="m-3 text-muted">© Python Django</span>
+          <span class="m-3 text-muted">© Ksenia</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Bootstrap JS and Popper -->
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {})
+    </script>
+  </body>
+</html>
+

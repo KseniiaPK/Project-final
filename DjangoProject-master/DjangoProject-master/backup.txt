@@ -1,0 +1,203 @@
+'''
+from django.shortcuts import render, HttpResponse
+from .models import Teacher, Student, Subject, Enrollment, Course
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
+# Create your views here.
+
+
+def HelloWorld(request):
+    return HttpResponse("hellow rold")
+
+
+def Registration(request):
+    if request.method == "POST":
+        username = request.POST['usernameInput']
+        password = request.POST['passwordInput']
+        name = request.POST['nameInput']
+        surname = request.POST['surNameInput']
+        photo = request.FILES.get('photoInput')  # Get the uploaded photo
+
+        if len(Student.objects.filter(Username=username)) > 0:
+            error_message = "Username already exists"
+            return render(request, 'registration.html', {'error_message': error_message})
+
+        user = Student(Username=username, Password=password,
+                       Name=name, Surname=surname, Photo=photo)
+
+        # if photo:  # Check if a photo was uploaded
+        #     # Save the uploaded photo to the 'media' folder
+        #     file_name = default_storage.save(photo.name, ContentFile(photo.read()))
+        #     user.Photo = file_name
+
+        user.save()
+
+        return render(request, "registration.html", {"success_message": "User registered successfully"})
+
+    return render(request, "registration.html")
+
+
+def Login(request):
+    if request.method == "POST":
+        username = request.POST['usernameInput']
+        password = request.POST['passwordInput']
+
+        try:
+            teacher = Teacher.objects.get(Username=username, Password=password)
+            request.session['username'] = teacher.Username
+            request.session['currentRole'] = "t"
+            return redirect("teacherBio")
+        except:
+            print("teacher login failed")
+
+        try:
+            student = Student.objects.get(Username=username, Password=password)
+
+            request.session['username'] = student.Username
+            request.session['currentRole'] = "s"
+            return redirect("studentBio")
+        except:
+            print("student login failed")
+
+        error_message = "Bad credentials"
+        return render(request, 'login.html', {'error_message': error_message})
+
+    return render(request, "login.html")
+
+# shows student info and <ul> of links to subjects.html, teachers.html, MyCourses.html
+
+
+def StudentBio(request):
+    if request.session['currentRole'] == 's':
+        username = request.session['username']
+        student = Student.objects.get(Username=username)
+
+        return render(request, "studentBio.html", {"user": student})
+    else:
+        return HttpResponse("Bad request")
+
+# shows html page with ALL subjects list(math, pe, chemistry, english)
+
+
+def Subjects(request):
+    subjects = Subject.objects.all()
+    return render(request, "subjects.html", {"subjects": subjects})
+
+# shows all courses that student enrolled
+
+
+def MyCourses(request):
+    username = request.session['username']
+    if username:
+        # Get the student instance with the specified username
+        student = Student.objects.get(Username=username)
+
+        # Retrieve the enrollments for the student
+        enrollments = Enrollment.objects.filter(Student=student)
+
+        # Retrieve the courses for the student based on enrollments
+        courses = Course.objects.filter(enrollment__in=enrollments)
+
+        # Now you have a queryset `courses` containing all the courses for the student
+        return render(request, "myCourses.html", {"myCourses": courses})
+
+    else:
+        return HttpResponse("Bad request")
+
+# student cilcks on Subject and it show all Courses related to subject => cards with title and so on...
+
+
+def AllCourses(request, subject_id):
+    courses = Course.objects.filter(Subject__id=subject_id)
+    subject = Subject.objects.get(id=subject_id)
+    print(subject.Name)
+    # can enroll same course and student, cause in real life you can enroll in different periods of time
+    if request.method == 'POST':
+        username = request.session['username']
+        student = Student.objects.get(Username=username)
+        course = Course.objects.get(id=request.POST["course_id"])
+
+        try:
+            enroll = Enrollment(Student=student, Course=course)
+            enroll.save()
+            # render success message
+            success_message = f"Successfully enrolled to course {course.Name}"
+            return render(request, 'allCourses.html', {'success_message': success_message, "courses": courses, "subject": subject})
+        except:
+            # render error message
+            print("can't enroll")
+            error_message = f"Can't enroll to course {course.Name}"
+            return render(request, 'allCourses.html', {'error_message': error_message, "courses": courses, "subject": subject})
+    else:
+        return render(request, "allCourses.html", {"courses": courses, "subject": subject})
+
+
+# details of the course, user clicks on card in AllCourses and open html page with single course
+def SingleCourse(request, course_id):
+    course = Course.objects.get(id=course_id)
+
+    if request.method == 'POST':
+        try:
+            username = request.session['username']
+            student = Student.objects.get(Username=username)
+            course = Course.objects.get(id=course_id)
+
+            enroll = Enrollment(Student=student, Course=course)
+            enroll.save()
+            # render success message
+            success_message = f"Successfully enrolled to course {course.Name}"
+            return render(request, 'course.html', {'success_message': success_message, "course": course})
+        except:
+            # render error message
+            print("can't enroll")
+            error_message = f"Can't enroll to course {course.Name}"
+            return render(request, 'course.html', {'error_message': error_message, "course": course})
+
+    return render(request, 'course.html', {"course": course})
+
+# teacher info panel, see I Teach => teachCourses.html
+
+
+def TeacherBio(request):
+    if request.session['currentRole'] == 't':
+        username = request.session['username']
+        teacher = Teacher.objects.get(Username=username)
+
+        return render(request, "teacherBio.html", {"user": teacher})
+    else:
+        return HttpResponse("Bad request")
+
+# user sees all teachers and their bio
+
+
+def Teachers(request):
+    teachers = Teacher.objects.all()
+    return render(request, "teachers.html", {"teachers": teachers})
+
+# single teacher, and shows courses cards he teaches => Course.html
+
+
+def SingleTeacher(request, teacher_id):
+    teacher = Teacher.objects.get(id=teacher_id)
+    courses = Course.objects.filter(Teacher__id=teacher_id)
+    return render(request, 'teacher.html', {"teacher": teacher, "courses": courses})
+
+# shows all course that teachers teaches => course.html
+
+
+def TeachCourses(request, teacher_id):
+    # join by teacher
+    teacher = Teacher.objects.get(id=teacher_id)
+    courses = Course.objects.filter(Teacher=teacher)
+
+    # Annotate the courses queryset with enrollment counts for each course
+    for course in courses:
+        course.enrollment_count = Enrollment.objects.filter(
+            Course=course).count()
+
+    return render(request, "teachCourses.html", {"courses": courses, "teacher": teacher})
+'''

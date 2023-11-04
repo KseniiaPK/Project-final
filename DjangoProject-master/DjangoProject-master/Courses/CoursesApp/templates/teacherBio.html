@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <!-- Own JS -->
+    <script type="text/javascript" src="{% static 'script.js' %}"></script>
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Teacher Bio</title>
+  </head>
+  <style>
+    .rainbow-button {
+      background: opacity: 0.9; linear-gradient(45deg, #FF886A, #FF61D2, #6F66FF, #69B5FF, #69FFB4, #FFCE72);
+      color: black;
+      border: none;
+      padding: 32px 64px;
+      border-radius: 16px;
+      transition: background 0.5s;
+      cursor: pointer;
+      font-size: 24px;
+
+    }
+
+    .rainbow-button:hover {
+      background: linear-gradient(45deg, #FF886A, #FF61D2, #6F66FF, #69B5FF, #69FFB4, #FFCE72);
+    }
+    .black-text {
+        color: black;
+      }
+
+      .menu-link {
+        text-decoration: none;
+        padding: 10px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+      }
+
+      .menu-link:hover {
+        background-color: #e0e0e0;
+      }
+
+
+  </style>
+
+  <body style="min-width: 450px; " class="d-flex flex-column min-vh-100">
+    <!-- NAVBAR -->
+    <ul class="nav justify-content-right" style="background-color: #f0f0f0; padding: 10px;">
+        <li class="nav-item">
+        <a class="nav-link black-text menu-link" href="{% url 'login'%}">Logout</a>
+        </li>
+    </ul>
+
+	{% comment %}MAIN{% endcomment %}
+    <div class="container" style="display: flex; align-items: center; padding-top: 40px; padding-bottom: 40px;">
+      {% comment %}user card{% endcomment %}
+      <div style="width: 70%;">
+        <h1><strong>Hello, {{ user.Name }} {{ user.Surname }}</strong></h1>
+
+        <img src="{{ user.Photo.url }}" class="rounded" style="max-width: 100%; height: 400px; align-self: start" />
+      </div>
+	  <div style="width: 30%;">
+        <ul style="list-style-type: none;">
+          <li>
+            <button class="rainbow-button">
+              <a href="{% url 'teachCourses' teacher_id=user.id %}" style="color: black; text-decoration: none;">Courses I teach</a>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- FOOTER -->
+    <div class="container mt-auto" style=" bottom: 0; ">
+      <footer class="d-flex flex-wrap justify-content-center justify-content-md-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+          <span class="m-3 text-muted">© Python Django</span>
+          <span class="m-3 text-muted">© Ksenia</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Bootstrap JS and Popper -->
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {})
+    </script>
+  </body>
+</html>
